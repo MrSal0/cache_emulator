@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStringList>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
