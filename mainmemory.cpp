@@ -16,6 +16,8 @@ MainMemory::MainMemory() {
     this->word_size = DEFAULT_WORD_SIZE;
     this->offset = DEFAULT_BLOCK_SIZE;
     this->block_count = (memory_size / (word_size * (pow(2, offset))));
+    this->PA_length = log(memory_size)/log(2);
+
 
     this->fill_cells();
 }
@@ -41,6 +43,7 @@ MainMemory::MainMemory(int memory_size, int word_size, int offset){
     }
 
     this->block_count = (memory_size / (word_size * (pow(2, offset))));
+    this->PA_length = log(memory_size)/log(2);
     this->fill_cells();
 }
 
@@ -56,6 +59,14 @@ unordered_map <string, vector<int>> MainMemory::get_cells(){
 }
 int MainMemory::get_offset(){
     return this->offset;
+}
+
+vector <string> MainMemory::get_keys(){
+    vector <string> cell_keys;
+    for (auto key: memory_cells){
+        cell_keys.push_back(key.first);
+    }
+    return cell_keys;
 }
 
 string MainMemory::DEC_to_HEX(int decimal_number){
@@ -94,6 +105,7 @@ void MainMemory::show_console(){
     cout << "Word size:\t\t" << word_size << " bits"<< endl;
     cout << "Bits for offset:\t" << offset << endl;
     cout << "Number of blocks:\t" << block_count << endl;
+    cout << "PA length:\t\t" << PA_length << endl;
     cout << "Memory cells:\t\t" << endl;
 
     for (auto a: memory_cells){

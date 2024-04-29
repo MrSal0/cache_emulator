@@ -11,28 +11,30 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-
-    MainMemory MM(2048, 2, 2);
+    //===========================================================--MAIN MEMORY--===========================================================
+    MainMemory MM(2048, 2, 4);
     MM.show_console();
 
-
     // Setting numebr of cols, rows
+
+    int main_memory_width = 400;
+    int main_memory_height = 600;
     ui->tableWidget_mainMemory->setRowCount(MM.get_block_count());
     ui->tableWidget_mainMemory->setColumnCount(MM.get_words_block() + 1);
-
+    ui->tableWidget_mainMemory->resize(main_memory_width, main_memory_height);
     // Setting column size
-    int block_col_size = 100;
-    int other_col_size = 370;
+    int block_col_width = 100;
+    int other_col_width = main_memory_width - block_col_width - 30;
     string memory_col_str = "Word ";
     if (MM.get_offset() > 2){
-        block_col_size = 50;
+        block_col_width = 50;
         memory_col_str = "W";
-        other_col_size = 430;
+        other_col_width = main_memory_width - block_col_width - 30;
     }
 
-    ui->tableWidget_mainMemory->setColumnWidth(0, block_col_size);
+    ui->tableWidget_mainMemory->setColumnWidth(0, block_col_width);
     for (int i = 1; i < MM.get_words_block() + 1; i++){
-        ui->tableWidget_mainMemory->setColumnWidth(i, other_col_size / (MM.get_words_block()) );
+        ui->tableWidget_mainMemory->setColumnWidth(i, other_col_width / (MM.get_words_block()) );
     }
 
     // Setting column headers
@@ -44,10 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableWidget_mainMemory->setHorizontalHeaderLabels(title_columns);
 
     // Getting all keys
-    vector<string> cell_keys;
-    for (auto key: MM.get_cells()){
-        cell_keys.push_back(key.first);
-    }
+    vector<string> cell_keys = MM.get_keys();
 
     // Filling the cells
     for (int i = 0; i < MM.get_block_count(); i++){
@@ -59,6 +58,11 @@ MainWindow::MainWindow(QWidget *parent)
             ui->tableWidget_mainMemory->setItem(i, j + 1, new QTableWidgetItem(QString::fromStdString(cell_value)));
         }
     }
+    //===========================================================--Cache --===========================================================
+
+
+
+
 }
 
 

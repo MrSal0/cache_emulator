@@ -15,8 +15,10 @@ class MainMemory
 protected:
     int memory_size;
     int word_size;          // number of bits per 1 word
-    int offset;         // number of words in 1 block
+    int offset;         // number of bits for... words per block (?)
     int block_count;        // number of blocks in the memory
+
+    int PA_length;
     unordered_map <string, vector<int>> memory_cells;
 
 
@@ -27,6 +29,7 @@ public:
     int get_block_count();
     int get_words_block();
     int get_offset();
+    vector <string> get_keys();
     unordered_map <string, vector<int>> get_cells();
 
     string DEC_to_HEX(int decimal_number);
