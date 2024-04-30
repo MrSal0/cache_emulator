@@ -2,19 +2,25 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1199</width>
-    <height>699</height>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="lineEdit_hex_intruction">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -23,18 +29,24 @@
       <height>28</height>
      </rect>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>210</x>
       <y>40</y>
       <width>281</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Звернення до комірки пам'яті (HEX)</string>
+     <string>Запит до комірки пам'яті (HEX)</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableWidget_mainMemory">
@@ -96,77 +108,15 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>150</x>
         <y>20</y>
         <width>91</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Instruction:</string>
+       <string>Запит (BIN):</string>
       </property>
-     </widget>
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>50</y>
-        <width>371</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContents</enum>
-      </property>
-      <property name="showDropIndicator" stdset="0">
-       <bool>true</bool>
-      </property>
-      <property name="dragDropOverwriteMode">
-       <bool>true</bool>
-      </property>
-      <property name="showGrid">
-       <bool>true</bool>
-      </property>
-      <property name="rowCount">
-       <number>1</number>
-      </property>
-      <property name="columnCount">
-       <number>3</number>
-      </property>
-      <attribute name="horizontalHeaderVisible">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="horizontalHeaderCascadingSectionResizes">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderHighlightSections">
-       <bool>true</bool>
-      </attribute>
-      <row/>
-      <column>
-       <property name="text">
-        <string>Tag</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Index</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Offset</string>
-       </property>
-      </column>
      </widget>
      <widget class="QTableWidget" name="tableWidget_2">
       <property name="geometry">
@@ -269,6 +219,25 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
+     <widget class="QLineEdit" name="lineEdit_bin_intruction">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>50</y>
+        <width>261</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="widget">
      <attribute name="title">
@@ -280,6 +249,35 @@
       <string>N-way Set Accosiative</string>
      </attribute>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="pushB_generateInstruction">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>700</y>
+      <width>600</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate instuction</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_nextStep">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>700</y>
+      <width>600</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Look for data in the cache</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
