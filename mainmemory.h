@@ -19,7 +19,7 @@ protected:
     int block_count;        // number of blocks in the memory
 
     int PA_length;
-    unordered_map <string, vector<string>> memory_cells;        // HEX: [word1, word2, ... word N]
+    unordered_map <string, vector<string>> memory_cells;        // HEX, [word1, word2, ... word N]
 
 
 public:
@@ -32,11 +32,16 @@ public:
     unordered_map <string, vector<string>> get_cells();
     int get_offset();
     vector <string> get_keys();
+    int get_PA_length();
 
     void fill_cells();
     void show_console();
+
     static string DEC_to_HEX(int decimal_number);
     static string HEX_to_BIN(string HEX_number);
+    static int BIN_to_DEC(string BIN_number);
+    static string BIN_to_HEX(string BIN_number);
+
 
 };
 

@@ -2,6 +2,7 @@
 #include <random>
 #include <cmath>
 #include <stdlib.h>
+#include <string>
 #include "mainmemory.h"
 
 
@@ -69,6 +70,10 @@ vector <string> MainMemory::get_keys(){
     return cell_keys;
 }
 
+int MainMemory::get_PA_length(){
+    return this->PA_length;
+}
+
 void MainMemory::fill_cells(){
 
     for (int i = 0; i < block_count; i++){
@@ -105,22 +110,22 @@ void MainMemory::show_console(){
 
 // Wow. There is no static word here.
 // "Golden Rule: The static keyword is only used with the declaration of a static member, inside the class definition, but not with the definition of that static member."
-string MainMemory::DEC_to_HEX(int decimal_number){
-    string result_HEX = "";
+string MainMemory::DEC_to_HEX(int DEC_number){
+    string HEX_result = "";
     char HEX_digits[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
-    if (decimal_number == 0)
-        result_HEX = "0";
-    while (decimal_number > 0){
-        int reminer = decimal_number % 16;
-        result_HEX = HEX_digits[reminer] + result_HEX;
-        decimal_number /= 16;
+    if (DEC_number == 0)
+        HEX_result = "0";
+    while (DEC_number > 0){
+        int reminer = DEC_number % 16;
+        HEX_result = HEX_digits[reminer] + HEX_result;
+        DEC_number /= 16;
     }
-    return result_HEX;
+    return HEX_result;
 }
 
 string MainMemory::HEX_to_BIN(string HEX_number){
-    string result_BIN = "";
+    string BIN_result = "";
     map<char, string> BIN_digits = {{'0', "0000"},
                                         {'1', "0001"},
                                         {'2', "0010"},
@@ -140,7 +145,48 @@ string MainMemory::HEX_to_BIN(string HEX_number){
 
     for (int i = 0; i < HEX_number.length(); i++){
         char temp = HEX_number[i];
-        result_BIN = result_BIN + BIN_digits[temp];
+        BIN_result = BIN_result + BIN_digits[temp];
     }
-    return result_BIN;
+
+    return BIN_result;
+}
+
+int MainMemory::BIN_to_DEC(string BIN_number){
+    int DEC_result = 0;
+
+    for (int i = BIN_number.length() - 1, j = 0; i >= 0; i--, j++){                 // ??????????????? >= or >
+        if (BIN_number[i] == '0')
+            DEC_result += 0 * pow(2, j);
+        else {
+            DEC_result += 1 * pow(2, j);
+        }
+    }
+    return DEC_result;
+
+}
+
+string MainMemory::BIN_to_HEX(string BIN_number){
+    string HEX_result = "";
+    map<string, char> HEX_digits = {{"0000", '0'},
+                                    {"0001", '1'},
+                                    {"0010", '2'},
+                                    {"0011", '3'},
+                                    {"0100", '4'},
+                                    {"0101", '5'},
+                                    {"0110", '6'},
+                                    {"0111", '7'},
+                                    {"1000", '8'},
+                                    {"1001", '9'},
+                                    {"1010", 'A'},
+                                    {"1011", 'B'},
+                                    {"1100", 'C'},
+                                    {"1101", 'D'},
+                                    {"1110", 'E'},
+                                    {"1111", 'F'}};
+
+    for (int i = BIN_number.length(); i > 4; i -= 4){                     // ????????????????? >= or >
+        HEX_result += HEX_digits[BIN_number.substr(i - 4, 4)];
+
+    }
+    return HEX_result;
 }

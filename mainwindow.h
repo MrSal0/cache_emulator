@@ -1,12 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QTableWidget>
-#include <QStringList>
-#include <QString>
-#include <QPushButton>
-#include "mainmemory.h"
+
+#include<QMainWindow>
+
 
 QT_BEGIN_NAMESPACE
 
@@ -24,10 +21,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void generate_instructionClicked();        // Argument... how to make MakeMemory global variable, so i can delete this arg here
-
-    // Check in cache ->
+    void update_tableDC_values();
+    void generate_instructionClicked();
     void look_throught_cacheClicked();
+
 private:
     Ui::MainWindow *ui;
     //QTableWidget *tableWidget_mainMemory;
