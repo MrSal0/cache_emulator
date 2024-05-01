@@ -28,11 +28,12 @@ public:
     int get_size();
     int get_line_count();
     int get_tag_length();
+    double get_hit_rate();
     unordered_map<int, vector<string>> get_cache_cells();
     vector<string> get_line(int line_index);
 
     string search_MM(string BIN_tag);
-    void search_cache(string BIN_instr);
+    int search_cache(string BIN_instr);
 
     void show_all_console();
     void show_cells_console();

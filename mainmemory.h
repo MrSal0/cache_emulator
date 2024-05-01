@@ -37,7 +37,9 @@ public:
     void fill_cells();
     void show_console();
 
-    static string DEC_to_HEX(int decimal_number);
+    static string BIN_addSpaces(string BIN_number);
+    static string DEC_to_HEX(int DEC_number);
+    static string DEC_to_BIN(int DEC_number);
     static string HEX_to_BIN(string HEX_number);
     static int BIN_to_DEC(string BIN_number);
     static string BIN_to_HEX(string BIN_number);

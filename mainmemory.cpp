@@ -108,6 +108,14 @@ void MainMemory::show_console(){
 
 }
 
+
+string MainMemory::BIN_addSpaces(string BIN_number){
+    string BIN_result = BIN_number;
+    for(int i = BIN_result.length() - 4; i > 0; i -= 4){
+        BIN_result.insert(i, " ");
+    }
+    return BIN_result;
+}
 // Wow. There is no static word here.
 // "Golden Rule: The static keyword is only used with the declaration of a static member, inside the class definition, but not with the definition of that static member."
 string MainMemory::DEC_to_HEX(int DEC_number){
@@ -122,6 +130,24 @@ string MainMemory::DEC_to_HEX(int DEC_number){
         DEC_number /= 16;
     }
     return HEX_result;
+}
+
+string MainMemory::DEC_to_BIN(int DEC_number){
+    string BIN_result = "";
+
+    if (DEC_number == 0)
+        BIN_result = "0000";
+
+    while(DEC_number != 0){
+        BIN_result = to_string(DEC_number % 2) + BIN_result;
+        DEC_number /= 2;
+    }
+
+    while(BIN_result.length() % 4 != 0){
+        BIN_result = "0" + BIN_result;
+    }
+
+    return BIN_result;
 }
 
 string MainMemory::HEX_to_BIN(string HEX_number){
@@ -190,3 +216,4 @@ string MainMemory::BIN_to_HEX(string BIN_number){
     }
     return HEX_result;
 }
+

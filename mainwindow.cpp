@@ -13,7 +13,7 @@
 
 using namespace std;
 
-MainMemory MM(2048, 2, 2);                  // (Size in bites, bites per word, offset)
+MainMemory MM(2048, 2, 1);                  // (Size in bites, bites per word, offset)
 DirectMappedCache DC(128, MM);         // (Size in bites, mainmemory)
 
 
@@ -31,8 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     //===========================================================--MAIN MEMORY--===========================================================
 
     // Setting numebr of cols, rows
-    int MM_width = 400;
-    int MM_height = 600;
+    int MM_width = 350;
+    int MM_height = 700;
     ui->tableW_MM->resize(MM_width, MM_height);
     ui->tableW_MM->setRowCount(MM.get_block_count());
     ui->tableW_MM->setColumnCount(MM.get_words_block() + 1);
@@ -75,30 +75,55 @@ MainWindow::MainWindow(QWidget *parent)
     // Direct Mapping Cache
     // dc - direct cache
 
-    int DC_width = 550;
-    int DC_height = 300;
+    int DC_width = 680;
+    int DC_height = 500;
     ui->tableW_DC->resize(DC_width, DC_height);
     ui->tableW_DC->setRowCount(DC.get_line_count());
 
-    QStringList DC_title_columns = {"Index", "Valid bit", "Tag", "Data"};
+    QStringList DC_title_columns = {"Index", "Valid bit", "Tag", "Data", "Dirty bit"};
     ui->tableW_DC->setColumnCount(DC_title_columns.length());
     ui->tableW_DC->setHorizontalHeaderLabels(DC_title_columns);
 
-    ui->tableW_DC->setColumnWidth(0, 70);
+    ui->tableW_DC->setColumnWidth(0, 100);
     ui->tableW_DC->setColumnWidth(1, 70);
-    ui->tableW_DC->setColumnWidth(2, (DC_width - 140) / 2);
-    ui->tableW_DC->setColumnWidth(3, (DC_width - 140) / 2);
+    ui->tableW_DC->setColumnWidth(2, DC_width - 360);
+    ui->tableW_DC->setColumnWidth(3, 100);
+    ui->tableW_DC->setColumnWidth(4, 70);
 
     // Filling init value of cells (can be optimized)
     // Filling: index
     for (int i = 0; i < DC.get_line_count(); i++){
-        QTableWidgetItem *cache_cell = new QTableWidgetItem(QString::fromStdString(to_string(i)));
+        QTableWidgetItem *cache_cell = new QTableWidgetItem(QString::fromStdString(MainMemory::BIN_addSpaces(MainMemory::DEC_to_BIN(i)) + " (" + to_string(i) + ")"));
         cache_cell->setTextAlignment(Qt::AlignCenter);
         ui->tableW_DC->setItem(i, 0, cache_cell);
     }
-
     // Filing: init valid bit, tag, data
     update_tableDC_values();
+
+
+
+    // Table for BIN breakdown (row with number of bits)
+
+
+    int breakdownTable_width = 380;
+    int breakdownTable_height = 90;
+    ui->tableW_instr_breakdown->resize(breakdownTable_width, breakdownTable_height);
+
+    QTableWidgetItem *breakdown_cell_index = new QTableWidgetItem(QString::fromStdString(to_string(int(log(DC.get_line_count()) / log(2)))) + " bits");      // Index
+    breakdown_cell_index->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(0, 0, breakdown_cell_index);
+    ui->tableW_instr_breakdown->setColumnWidth(0, breakdownTable_width / 3);
+
+    QTableWidgetItem *breakdown_cell_tag = new QTableWidgetItem(QString::fromStdString(to_string(DC.get_tag_length())) + " bits");                     // Tag
+    breakdown_cell_tag->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(0, 1, breakdown_cell_tag);
+    ui->tableW_instr_breakdown->setColumnWidth(1, breakdownTable_width / 3);
+
+
+    QTableWidgetItem *breakdown_cell_offset = new QTableWidgetItem(QString::fromStdString(to_string(DC.get_offset())) + " bits");                        // Offset
+    breakdown_cell_offset->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(0, 2, breakdown_cell_offset);
+    ui->tableW_instr_breakdown->setColumnWidth(2, breakdownTable_width / 3);
 
 
     //===========================================================--Buttons--===========================================================
@@ -113,19 +138,22 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::update_tableDC_values(){
     for (int i = 0; i < DC.get_line_count(); i++){
         vector <string> cache_line = DC.get_line(i);
-        for (int j = 0; j < cache_line.size(); j++){
+        for (int j = 0; j < cache_line.size(); j += 2){                                 // j += 2!!!! To avoid tag. I will use for it BIN_addSpaces below cycle
             QTableWidgetItem *cache_cell = new QTableWidgetItem(QString::fromStdString(cache_line[j]));
             cache_cell->setTextAlignment(Qt::AlignCenter);
             ui->tableW_DC->setItem(i, j + 1, cache_cell);               // j + 1 cuz 0 col in busy with index, which equals "i"
         }
+        QTableWidgetItem *cell_tag = new QTableWidgetItem(QString::fromStdString(MainMemory::BIN_addSpaces(cache_line[1])));
+        cell_tag->setTextAlignment(Qt::AlignCenter);
+        ui->tableW_DC->setItem(i, 2, cell_tag);
     }
 }
 
 // Button for generation random instruction (HEX)
 void MainWindow::generate_instructionClicked(){
     int random_cell = rand() % MM.get_size();
-    ui->lineE_hex_intruction->clear();
-    ui->lineE_hex_intruction->insert(QString::fromStdString(MainMemory::DEC_to_HEX(random_cell)));
+    ui->lineE_hex_intr->clear();
+    ui->lineE_hex_intr->insert(QString::fromStdString(MainMemory::DEC_to_HEX(random_cell)));
     ui->pushB_nextStep->setEnabled(true);
 
     cout << "[Button] Generating random HEX instruction: " << endl
@@ -137,34 +165,44 @@ void MainWindow::look_throught_cacheClicked(){
     cout << "[Button] Looking throught cache for random HEX instruction" << endl;
 
     // HEX to BIN
-    string input_HEX = (ui->lineE_hex_intruction->text()).toStdString();
+    string input_HEX = (ui->lineE_hex_intr->text()).toStdString();
     string input_BIN = MainMemory::HEX_to_BIN(input_HEX);
     string max_HEX = MainMemory::DEC_to_HEX(MM.get_size() - 1);          // Max HEX number in the memory
     string max_BIN = MainMemory::HEX_to_BIN(max_HEX);                   // Max BIN number in the memory
     while (input_BIN.length() < max_BIN.length()){                      // For cases like this: 2A and 34D. Tag length will be completely different
         input_BIN = "0000" + input_BIN;
     }
-    // Showing BIN value
-    string temp = input_BIN;
-    for(int i = 4; i < temp.length(); i += 4){
-        temp.insert(i, " ");
-        i++;
-    }
-    ui->lineE_bin_intruction->clear();
-    ui->lineE_bin_intruction->insert(QString::fromStdString(temp));
 
     cout << "HEX:\t" << input_HEX << endl
          << "BIN:\t" << input_BIN << endl;
 
     // Cache search
     cout << "[Function][search_cache] " << endl;
-    DC.search_cache(input_BIN);
+    int index_line_DEC = DC.search_cache(input_BIN);
+    vector<string> cache_line = DC.get_line(index_line_DEC);
 
-    // Updating the table
+    // Showing BIN value
+    ui->lineE_bin_intr->clear();
+    ui->lineE_bin_intr->insert(QString::fromStdString(MainMemory::BIN_addSpaces(input_BIN)));
+
+    // Showing BIN breakdown table: index, tag, offset
+    QTableWidgetItem *breakdown_cell_index = new QTableWidgetItem(QString::fromStdString(MainMemory::BIN_addSpaces(MainMemory::DEC_to_BIN(index_line_DEC)) + " (" + to_string(index_line_DEC) + ")"));
+    breakdown_cell_index->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(1, 0, breakdown_cell_index);
+
+    QTableWidgetItem *breakdown_cell_tag = new QTableWidgetItem(QString::fromStdString(MainMemory::BIN_addSpaces(cache_line[1])));     // Tag
+    breakdown_cell_tag->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(1, 1, breakdown_cell_tag);
+
+    QTableWidgetItem *breakdown_cell_offset = new QTableWidgetItem(QString::fromStdString(MainMemory::BIN_addSpaces(input_BIN.substr(DC.get_tag_length() + 1))));          // Offset
+    breakdown_cell_offset->setTextAlignment(Qt::AlignCenter);
+    ui->tableW_instr_breakdown->setItem(1, 2, breakdown_cell_offset);
+
+    // Updating the cache table
     cout << "[Funtion][updata_tableDc_values]" << endl;
     update_tableDC_values();
     ui->pushB_nextStep->setEnabled(false);
-
+    cout << "Hit rate: " << DC.get_hit_rate() << endl;
     cout << "----------------------------------------------------------------" << endl;
 
 }
