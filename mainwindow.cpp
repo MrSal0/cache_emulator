@@ -13,7 +13,7 @@
 
 using namespace std;
 
-MainMemory MM(2048, 2, 1);                  // (Size in bites, bites per word, offset)
+MainMemory MM(2048, 2, 4);                  // (Size in bites, bites per word, offset)
 DirectMappedCache DC(128, MM);         // (Size in bites, mainmemory)
 
 
