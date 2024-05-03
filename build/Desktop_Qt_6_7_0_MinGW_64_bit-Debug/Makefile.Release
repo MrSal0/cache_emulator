@@ -745,7 +745,6 @@ release/mainwindow.o: ../../mainwindow.cpp ../../../../6.7.0/mingw_64/include/Qt
 		../../../../6.7.0/mingw_64/include/QtGui/QAction \
 		../../../../6.7.0/mingw_64/include/QtWidgets/QApplication \
 		../../../../6.7.0/mingw_64/include/QtWidgets/qapplication.h \
-		../../../../6.7.0/mingw_64/include/QtWidgets/QFrame \
 		../../../../6.7.0/mingw_64/include/QtWidgets/QHeaderView \
 		../../../../6.7.0/mingw_64/include/QtWidgets/qheaderview.h \
 		../../../../6.7.0/mingw_64/include/QtWidgets/QLabel \
@@ -760,6 +759,8 @@ release/mainwindow.o: ../../mainwindow.cpp ../../../../6.7.0/mingw_64/include/Qt
 		../../../../6.7.0/mingw_64/include/QtGui/qtextoption.h \
 		../../../../6.7.0/mingw_64/include/QtWidgets/QStatusBar \
 		../../../../6.7.0/mingw_64/include/QtWidgets/qstatusbar.h \
+		../../../../6.7.0/mingw_64/include/QtWidgets/QTextEdit \
+		../../../../6.7.0/mingw_64/include/QtWidgets/qtextedit.h \
 		../../../../6.7.0/mingw_64/include/QtWidgets/QWidget \
 		../../mainmemory.h \
 		../../mainmemory.cpp \
