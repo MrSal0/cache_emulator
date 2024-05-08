@@ -38,8 +38,8 @@ constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::string
     "MainWindow",
     "update_tableDC_values",
     "",
-    "generate_instructionClicked",
-    "look_throught_cacheClicked"
+    "look_throught_cacheClicked",
+    "on_pushButton_clicked"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -83,9 +83,9 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
         // method 'update_tableDC_values'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'generate_instructionClicked'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'look_throught_cacheClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'on_pushButton_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -98,8 +98,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         (void)_t;
         switch (_id) {
         case 0: _t->update_tableDC_values(); break;
-        case 1: _t->generate_instructionClicked(); break;
-        case 2: _t->look_throught_cacheClicked(); break;
+        case 1: _t->look_throught_cacheClicked(); break;
+        case 2: _t->on_pushButton_clicked(); break;
         default: ;
         }
     }

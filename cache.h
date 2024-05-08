@@ -1,43 +1,31 @@
-#include <vector>
-#include <map>
-#include <cmath>
 #include "mainmemory.h"
 
 #ifndef CACHE_H
 #define CACHE_H
 
-using namespace std;
-
-class DirectMappedCache: public MainMemory
+class Cache: public MainMemory
 {
 protected:
-    int size;                           // Bits for cache
-    int line_count;                    // Number of blocks
-
-    int tag_length;
-    unordered_map<int, vector<string>> cache_cells;      // index: valid_bit, tag, data
-
-    int total_hits;
-    int total_attempts;
-
+    int size;
+    int line_count;
+    int list_instr_size;
+    vector <string> list_of_instr;      // L-0x3D, R-0x54, where L - load, record, R - read
 public:
-    DirectMappedCache();
-    DirectMappedCache(int size);
-    DirectMappedCache(int size, MainMemory MM);
+    Cache();
+    Cache(MainMemory MM);
+    Cache(int size, MainMemory MM);
+    void set_cache_size(int size);
+    void set_list_instr_size(int size);
 
-    int get_size();
+    int get_list_instr_size();
+    int get_cache_size();
     int get_line_count();
-    int get_tag_length();
-    double get_hit_rate();
-    unordered_map<int, vector<string>> get_cache_cells();
-    vector<string> get_line(int line_index);
+    string get_instr(int num_instr);
+    vector <string> get_list_instr();
 
-    string search_MM(string BIN_tag);
-    int search_cache(string BIN_instr);
-
-    void show_all_console();
-    void show_cells_console();
-
+    void generate_list_Binstr();     // B - both: load, record
+    void generate_list_Rinstr();
+    void generate_list_Linstr();
 
 };
 

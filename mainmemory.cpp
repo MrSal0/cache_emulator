@@ -1,13 +1,12 @@
 #include <iostream>
 #include <random>
-#include <cmath>
 #include <stdlib.h>
 #include <string>
 #include "mainmemory.h"
 
 
 #define DEFAULT_MEMORY_SIZE 16
-#define DEFAULT_WORD_SIZE 4
+#define DEFAULT_WORD_SIZE 1
 #define DEFAULT_BLOCK_SIZE 1
 
 using namespace std;
@@ -21,34 +20,62 @@ MainMemory::MainMemory() {
     this->fill_cells();
 }
 
-MainMemory::MainMemory(int memory_size, int word_size, int offset){
-    this->memory_size = DEFAULT_MEMORY_SIZE;
-    this->word_size = DEFAULT_WORD_SIZE;
-    this->offset = DEFAULT_BLOCK_SIZE;
+MainMemory::MainMemory(int memory_size, int word_size, int offset){             // ????????????????
+    // this->memory_size = DEFAULT_MEMORY_SIZE;
+    // this->word_size = DEFAULT_WORD_SIZE;
+    // this->offset = DEFAULT_BLOCK_SIZE;
 
-    if (memory_size % 2 != 0){
-        cout << "[MainMemory] Invalid memory size" << endl;
-    }
-    else if (word_size % 2 != 0){
-        cout << "[MinaMemory] Invalid word size" << endl;
-    }
-    else if (memory_size % (int)(word_size * (pow(2, offset))) != 0){
-        cout << "[MainMemory] Invalid block size" << endl;
-    }
-    else {
+    //if (memory_size % 2 != 0){
+    //    cout << "[MainMemory] Invalid memory size" << endl;
+    //}
+    //else if (word_size % 2 != 0){
+    //    cout << "[MinaMemory] Invalid word size" << endl;
+    //}
+    //else if (memory_size % (int)(word_size * (pow(2, offset))) != 0){
+    //    cout << "[MainMemory] Invalid block size" << endl;
+    //}
+    //else {
         this->memory_size = memory_size;
         this->word_size = word_size;
         this->offset = offset;
-    }
+    //}
 
     this->block_count = (memory_size / (word_size * (pow(2, offset))));
     this->PA_length = log(memory_size)/log(2);
     this->fill_cells();
 }
 
+void MainMemory::set_memory_size(int size){
+    this->memory_size = size;
+
+    this->block_count = (memory_size / (word_size * (pow(2, offset))));
+    this->PA_length = log(memory_size)/log(2);
+    this->fill_cells();
+}
+
+void MainMemory::set_word_size(int word_size){
+    this->word_size = word_size;
+
+    this->block_count = (memory_size / (word_size * (pow(2, offset))));
+    this->fill_cells();
+}
+
+void MainMemory::set_offset(int offset){
+    this->offset = offset;
+
+    this->block_count = (memory_size / (word_size * (pow(2, offset))));
+    this->fill_cells();
+}
+
+
 int MainMemory::get_size(){
     return this->memory_size;
 }
+
+int MainMemory::get_word_size(){
+    return this->word_size;
+}
+
 int MainMemory::get_block_count(){
     return this->block_count;
 }
@@ -75,15 +102,17 @@ int MainMemory::get_PA_length(){
 }
 
 void MainMemory::fill_cells(){
+    srand(0);
 
+    memory_cells.clear();
     for (int i = 0; i < block_count; i++){
         string key = MainMemory::DEC_to_HEX(i);
         vector <string> cell_value;
         for (int j = 0; j < pow(2, offset); j++){
-            cell_value.push_back(to_string(rand() % 10));
+            string random_value = to_string(rand() % 10);
+            cell_value.push_back(random_value);
         }
         memory_cells.insert({key, cell_value});
-        //cout << "key: " << key << endl;
         cell_value.clear();
     }
 
@@ -94,6 +123,7 @@ void MainMemory::show_console(){
     cout << "Main memory size:\t" << memory_size << " bits"<< endl;
     cout << "Word size:\t\t" << word_size << " bits"<< endl;
     cout << "Bits for offset:\t" << offset << endl;
+    cout << "Words in 1 block:\t" << pow(2, offset) << endl;
     cout << "Number of blocks:\t" << block_count << endl;
     cout << "PA length:\t\t" << PA_length << endl;
     cout << "Memory cells:\t\t" << endl;
@@ -129,7 +159,7 @@ string MainMemory::DEC_to_HEX(int DEC_number){
         HEX_result = HEX_digits[reminer] + HEX_result;
         DEC_number /= 16;
     }
-    return HEX_result;
+    return "0x" + HEX_result;
 }
 
 string MainMemory::DEC_to_BIN(int DEC_number){
@@ -169,7 +199,7 @@ string MainMemory::HEX_to_BIN(string HEX_number){
                                        {'E', "1110"},
                                        {'F', "1111"}};
 
-    for (int i = 0; i < HEX_number.length(); i++){
+    for (int i = 2; i < HEX_number.length(); i++){
         char temp = HEX_number[i];
         BIN_result = BIN_result + BIN_digits[temp];
     }
@@ -214,6 +244,17 @@ string MainMemory::BIN_to_HEX(string BIN_number){
         HEX_result += HEX_digits[BIN_number.substr(i - 4, 4)];
 
     }
-    return HEX_result;
+    return "0x" + HEX_result;
 }
+
+//MainMemory& MainMemory::operator=(MainMemory new_mm){
+//    this->memory_size = new_mm.memory_size;
+//    this->word_size = new_mm.word_size;
+    // this->offset = new_mm.offset;
+    // this->block_count = new_mm.offset;
+    // this->PA_length = new_mm.PA_length;
+    // this->memory_cells.clear();
+    // memory_cells = new_mm.memory_cells;
+
+// }
 

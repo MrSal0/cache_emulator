@@ -8,27 +8,50 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "mainmemory.h"
-#include "mainmemory.cpp"
-#include "cache.h"
+#include "dmCache.h"
+#include "menu.h"
 
 using namespace std;
 
-MainMemory MM(2048, 2, 4);                  // (Size in bites, bites per word, offset)
-DirectMappedCache DC(128, MM);         // (Size in bites, mainmemory)
+Menu *menu;
 
+MainMemory MM;                  // (Size in bites, bites per word, offset)
+Cache cache;
+DirectMappedCache DC(cache);         // (Size in bites, mainmemory)
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, MainMemory *new_MM, Cache *new_cache)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
+
+
+
+    MM = *new_MM;
+    cache = *new_cache;
+    DC = *new DirectMappedCache(cache);
 
     MM.show_console();
     DC.show_all_console();
+    //--------------------------------------------------------- Info page --------------------------------------------------------
 
+    ui->label_mm_size->setText(QString::number(MM.get_size()));
+    ui->label_cache_size->setText(QString::number(cache.get_cache_size()));
+    ui->label_word_size->setText(QString::number(MM.get_word_size()));
+    ui->label_offset->setText(QString::number(MM.get_offset()));
 
-    //===========================================================--MAIN MEMORY--===========================================================
+    string str_list_instr = "";
+    for (int i = 0; i < cache.get_list_instr_size() - 1; i++) {
+       str_list_instr += cache.get_instr(i) + ", ";
+    }
+    str_list_instr += cache.get_instr(cache.get_list_instr_size() - 1);
+    ui->tEdit_list_instr->clear();
+    ui->tEdit_list_instr->insertPlainText(QString::fromStdString(str_list_instr));
+
+    ui->lineE_hex_intr->clear();
+    ui->lineE_hex_intr->setText(QString::fromStdString(cache.get_instr(0)));
+    ui->pushB_nextStep->setEnabled(true);
+    // ------------------------------------------------------------- MAIN MEMORY  -------------------------------------------------------------
 
     // Setting numebr of cols, rows
     int MM_width = 350;
@@ -36,6 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableW_MM->resize(MM_width, MM_height);
     ui->tableW_MM->setRowCount(MM.get_block_count());
     ui->tableW_MM->setColumnCount(MM.get_words_block() + 1);
+
+
+    cout << "ok" << endl;
 
     // Setting col size, depending on the num of cols
     int block_col_width = 100;
@@ -46,10 +72,17 @@ MainWindow::MainWindow(QWidget *parent)
         memory_col_str = "W";
         other_col_width = MM_width - block_col_width - 30;
     }
+
+
+    cout << "ok" << endl;
+
     ui->tableW_MM->setColumnWidth(0, block_col_width);
     for (int i = 1; i < MM.get_words_block() + 1; i++){
         ui->tableW_MM->setColumnWidth(i, other_col_width / (MM.get_words_block()) );
     }
+
+
+    cout << "ok" << endl;
 
     // Setting column titles (mm - main memory)
     QStringList MM_title_columns = {"Block"};
@@ -59,21 +92,31 @@ MainWindow::MainWindow(QWidget *parent)
     }
     ui->tableW_MM->setHorizontalHeaderLabels(MM_title_columns);
 
-    // Filling the cells with random numbers
+
+    cout << "ok" << endl;
+
+    // Filling the cells
     vector<string> cell_keys = MM.get_keys();
     for (int i = 0; i < MM.get_block_count(); i++){
         string cell_key = cell_keys[i];
+
+        cout << cell_key << ": ";
         ui->tableW_MM->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(cell_key)));
         for (int j = 0; j < MM.get_words_block(); j++){
             vector <string> cell_value_array = MM.get_cells()[cell_key];
             string cell_value = cell_value_array[j];
+            cout << cell_value << ", ";
             ui->tableW_MM->setItem(i, j + 1, new QTableWidgetItem(QString::fromStdString(cell_value)));
         }
+        cout << endl;
     }
-    //===========================================================--Tabs--===========================================================
+    //----------------------------------------------------------- Tabs  -------------------------------------------------------------
 
-    // Direct Mapping Cache
+    //------------------------------------------------------------ DC -------------------------------------------------------------
     // dc - direct cache
+
+
+    cout << "ok5" << endl;
 
     int DC_width = 680;
     int DC_height = 500;
@@ -100,11 +143,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Filing: init valid bit, tag, data
     update_tableDC_values();
 
-
-
     // Table for BIN breakdown (row with number of bits)
-
-
     int breakdownTable_width = 380;
     int breakdownTable_height = 90;
     ui->tableW_instr_breakdown->resize(breakdownTable_width, breakdownTable_height);
@@ -119,17 +158,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableW_instr_breakdown->setItem(0, 1, breakdown_cell_tag);
     ui->tableW_instr_breakdown->setColumnWidth(1, breakdownTable_width / 3);
 
-
     QTableWidgetItem *breakdown_cell_offset = new QTableWidgetItem(QString::fromStdString(to_string(DC.get_offset())) + " bits");                        // Offset
     breakdown_cell_offset->setTextAlignment(Qt::AlignCenter);
     ui->tableW_instr_breakdown->setItem(0, 2, breakdown_cell_offset);
     ui->tableW_instr_breakdown->setColumnWidth(2, breakdownTable_width / 3);
 
+    //------------------------------------------------------------- FA -------------------------------------------------------------
 
-    //===========================================================--Buttons--===========================================================
+    //------------------------------------------------------------- SA -------------------------------------------------------------
 
-    connect(ui->pushB_generateInstruction, SIGNAL(released()), this, SLOT(generate_instructionClicked()));
+
+
+    //-------------------------------------------------------- Bottom buttons --------------------------------------------------------
     connect(ui->pushB_nextStep, SIGNAL(released()), this, SLOT(look_throught_cacheClicked()));
+
     //connect(ui->pushB_generateInstruction, &QPushButton::released, this, &MainWindow::event_generate_intruction);
     ui->pushB_nextStep->setEnabled(false);
 
@@ -147,17 +189,6 @@ void MainWindow::update_tableDC_values(){
         cell_tag->setTextAlignment(Qt::AlignCenter);
         ui->tableW_DC->setItem(i, 2, cell_tag);
     }
-}
-
-// Button for generation random instruction (HEX)
-void MainWindow::generate_instructionClicked(){
-    int random_cell = rand() % MM.get_size();
-    ui->lineE_hex_intr->clear();
-    ui->lineE_hex_intr->insert(QString::fromStdString(MainMemory::DEC_to_HEX(random_cell)));
-    ui->pushB_nextStep->setEnabled(true);
-
-    cout << "[Button] Generating random HEX instruction: " << endl
-         << "HEX:\t" << random_cell << endl;
 }
 
 // Button that looks the instruction in cache and then in MM
@@ -208,8 +239,16 @@ void MainWindow::look_throught_cacheClicked(){
 }
 
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    hide();
+    menu = new Menu(this, &MM, &cache);
+    menu->show();
+}
+

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "mainmemory.h"
+#include "menu.h"
 
 #include <QApplication>
 
@@ -8,7 +9,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    MainWindow w;
+    Menu w;
     w.show();
 
     return app.exec();

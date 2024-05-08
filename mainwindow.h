@@ -3,6 +3,9 @@
 
 
 #include<QMainWindow>
+#include "menu.h"
+#include "mainmemory.h"
+#include "cache.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -16,18 +19,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr, MainMemory *new_MM = new MainMemory(), Cache *new_cache = new Cache());
     ~MainWindow();
 
 private slots:
     void update_tableDC_values();
-    void generate_instructionClicked();
     void look_throught_cacheClicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    //QTableWidget *tableWidget_mainMemory;
-    //QPushButton *pushB_generateInstruction;
+
 
 
 };
